@@ -23,6 +23,7 @@ namespace Nat
     intro h h_z
     apply Nat.le_of_add_le_add_right
     rw [succ_add, Nat.sub_add_cancel h_z]
+
     assumption
 
   theorem add_mul_div {x y z : Nat} (h_x : 0 < x)
@@ -36,8 +37,7 @@ namespace Nat
       simp [HDiv.hDiv, Div.div]
       rw [Nat.div]
       simp [h_x, Nat.le_add_right]
-      rw [Nat.add_comm x z, Nat.add_sub_cancel,
-        Nat.add_comm _ 1, ←Nat.add_assoc, Nat.add_one]
+      rw [Nat.add_comm y _, Nat.add_assoc, Nat.add_comm 1 y, add_one, Nat.add_comm]
 
   theorem mul_div_with_rem_cancel (x : Nat) {q r : Nat} (h_r : r < q)
     : (x * q + r) / q = x
@@ -65,25 +65,6 @@ namespace Nat
     apply Nat.le_of_add_le_add_right (b := y % x)
     rw [div_add_mod]
     apply Nat.le_add_right
-
-  /-
-  theorem lt_of_mul_lt {x y z : Nat} (h_z : 0 < z)
-    : x < y * z → x / z < y
-    := by
-    intro h
-    by_cases x / z < y
-    case pos h_res =>
-      assumption
-    case neg h_res =>
-      rw [←div_add_mod x z] at h
-      apply False.elim $ Nat.not_le_of_gt h _
-      clear h h_z
-      rw [Nat.mul_comm]
-      suffices z * y ≤ z * (x / z) from
-        Nat.le_trans this $ Nat.le_add_right _ (x % z)
-      apply Nat.mul_le_mul_left z
-      exact Nat.ge_of_not_lt h_res
-  -/
 
   theorem lt_of_lt_le {x y z : Nat} : x < y → y ≤ z → x < z := by
     intro h h'
@@ -152,8 +133,8 @@ namespace Nat
       apply lt_succ_sqrt
 
 
-#eval sqrt 0
-#eval (7 + 15 / 7) / 2
+example: sqrt 0 = 0 := rfl
+example: (7 + 15 / 7) / 2 = 4 := rfl
 
 end Nat
 
@@ -349,7 +330,7 @@ namespace List
     : (L1 ++ L2).set i x = L1.set i x ++ L2
     := by
     induction L1 generalizing i with
-    | nil => simp at h; contradiction
+    | nil => simp at h
     | cons hd tl ih =>
     match i with
     | 0 =>
@@ -476,7 +457,7 @@ namespace List
 
   def index_of_mem (L : List α) (x) (h : x ∈ L) : ∃ i, L.get i = x := by
     induction L
-    cases h <;> contradiction
+    cases h
     case cons hd tl ih =>
     cases h
     apply Exists.intro ⟨0,by apply Nat.succ_le_succ; exact Nat.zero_le _⟩
@@ -491,8 +472,6 @@ namespace List
     : (L.take n).get i = L.get ⟨i.val, by
         apply Nat.le_trans i.isLt
         simp [length_take]
-        rw [Nat.min_symm]
-        exact Nat.min_le_left _ _
       ⟩
     := by
     induction L generalizing n
