@@ -13,13 +13,13 @@ def foldl' : (l : List τ) → (β → (x : τ) → x ∈ l → β) → β → �
 | []   , _, acc => acc
 | x::xs, f, acc =>
   have h' : ∀ {x'}, x' ∈ xs → x' ∈ x::xs := List.Mem.tail x
-  foldl' xs (λ acc x h => f acc x (h' h)) (f acc x (List.Mem.head _ _))
+  foldl' xs (λ acc x h => f acc x (h' h)) (f acc x (List.Mem.head _))
 
 def foldr' : (l : List τ) → ((x : τ) → x ∈ l → β → β) → β → β
 | []   , _, acc => acc
 | x::xs, f, acc =>
   have h' : ∀ {x'}, x' ∈ xs → x' ∈ x::xs := List.Mem.tail x
-  f x (List.Mem.head _ _) (foldr' xs (λ x h acc => f x (h' h) acc) acc)
+  f x (List.Mem.head _) (foldr' xs (λ x h acc => f x (h' h) acc) acc)
 
 theorem foldl_eq_foldl' (c : List τ) (f : β → τ → β) (acc : β)
   : foldl f acc c = foldl' c (λ acc x _ => f acc x) acc
@@ -264,7 +264,6 @@ theorem get_le_sum (L : List Nat) (i : Nat) (h_i : i < L.length)
     match i with
     | 0 =>
       simp [get, sum]
-      apply Nat.le_add_right
     | i+1 =>
       simp [get, sum]
       rw [←Nat.zero_add (get _ _)]
@@ -284,7 +283,7 @@ theorem sum_set (L : List Nat) (i : Nat) (w : Nat) (h_i : i < L.length)
     contradiction
   | y :: z, 0 =>
     simp [set, sum, get]
-    rw [Nat.add_comm x, Nat.add_sub_cancel, Nat.add_comm w]
+    rw [Nat.add_comm w _]
   | y :: z, i+1 =>
     simp [set, sum, get]
     rw [ih]

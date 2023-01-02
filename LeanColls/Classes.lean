@@ -77,7 +77,7 @@ Foldables can be Iterable by first collecting everything
 into a list. Note that the iteration occurs in the same
 order that elements are applied in when folding.
 -/
-@[defaultInstance]
+@[default_instance]
 instance [Foldable C τ] : Iterable C τ where
   ρ := List τ
   step := List.front?
