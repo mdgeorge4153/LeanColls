@@ -353,10 +353,11 @@ namespace List
       simp at h
     | i+1 =>
       simp at h
+      rw [← Nat.add_one] at h
+      simp at h
       simp [set]
-      rw [Nat.succ_sub_succ]
       apply ih
-      apply Nat.le_of_succ_le_succ h
+      exact h
   
   theorem map_set {L : List τ} {i x} {f : τ → τ'}
     : (L.set i x).map f = (L.map f).set i (f x)
@@ -384,7 +385,7 @@ namespace List
       match rest, h with
       | [], _ => []
       | (x::xs), h =>
-        ⟨x, h _ (List.Mem.head _ _)⟩ ::
+        ⟨x, h _ (List.Mem.head xs)⟩ ::
         aux xs (by intros; apply h; apply List.Mem.tail; assumption)
     aux L (by intros; assumption)
 
@@ -501,25 +502,26 @@ namespace List
     := by simp
 
   @[simp]
-  theorem length_rangeAux : (rangeAux n L).length = L.length + n := by
-    induction n generalizing L <;> simp [length, rangeAux, *]
+  theorem length_rangeAux : (range.loop n L).length = L.length + n := by
+    induction n generalizing L <;> simp [length, range.loop, *]
     case succ n ih =>
     rw [←Nat.add_one, Nat.add_comm n 1, Nat.add_assoc]
 
+
   @[simp]
-  theorem length_range : (range n).length = n := by
-    simp [range]
+  theorem length_range : (range n).length = n :=
+    by simp [range]
 
   theorem rangeAux_eq_append
-    : rangeAux n (x :: L) = rangeAux n [] ++ (x :: L)
+    : range.loop n (x :: L) = range.loop n [] ++ (x :: L)
     := by
-    suffices ∀ L, rangeAux n L = rangeAux n [] ++ L from
+    suffices ∀ L, range.loop n L = range.loop n [] ++ L from
       this (cons x L)
     intro L
     induction n generalizing L
-    simp [rangeAux]
+    simp [range.loop]
     case succ n ih =>
-    simp [get, rangeAux]
+    simp [get, range.loop]
     rw [@ih (n :: L), @ih [n]]
     simp [List.append_assoc]
   
@@ -528,9 +530,9 @@ namespace List
     | zero => cases h
     | succ n ih =>
       unfold range
-      simp [rangeAux]
+      simp [range.loop]
       rw [rangeAux_eq_append]
-      have : i < length (rangeAux n [] ++ [n]) := by
+      have : i < length (range.loop n [] ++ [n]) := by
         simp; assumption
       rw [get?_eq_get this, Option.some_inj]
       match h_i:Nat.beq i n with
