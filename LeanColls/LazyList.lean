@@ -17,6 +17,7 @@ Authors: Leonardo de Moura, James Gallicchio
 
 import LeanColls.Classes
 
+/-
 inductive LazyList (α : Type u)
 | nil : LazyList α
 | cons (hd : α) (tl : LazyList α) : LazyList α
@@ -310,3 +311,5 @@ sieve (iota 2)
   -- IO.println $ fib.interleave (iota.map (+100)),
   -- IO.println $ ((iota.map (+10)).filter (λ v, v % 2 == 0)),
   return ()
+
+-/
