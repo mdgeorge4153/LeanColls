@@ -24,6 +24,9 @@ class FoldableOps.{uC,uT} (C : Type uC) (τ : outParam (Type uT)) where
 
 namespace FoldableOps
 
+def maxOfLt [L : LT τ] [DecidableRel L.lt] : Max τ where
+  max a b := if a < b then b else a
+
 def defaultImpl (C : Type u) (τ : Type v) [Foldable C τ] : FoldableOps C τ where
   toList := λ c =>
     Foldable.fold c (fun acc x => x::acc) []
@@ -42,7 +45,7 @@ def defaultImpl (C : Type u) (τ : Type v) [Foldable C τ] : FoldableOps C τ wh
   max := λ c =>
     Foldable.fold c (fun
       | none   => λ x => some x
-      | some x => λ y => some (_root_.max x y)
+      | some x => λ y => some (maxOfLt.max x y)
     ) none
   toString := λ c _ sep =>
     Foldable.fold c
