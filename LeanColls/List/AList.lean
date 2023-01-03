@@ -171,6 +171,7 @@ theorem remove_update (k' k : κ) (t : Option τ) (as) (h_ks : k' ≠ k)
         exact ih
       case inr h_k' =>
         simp [update, h_k]
+        simp [remove] at ih
         congr
 
 theorem size_update (k t) (as : AList κ τ)
@@ -223,7 +224,7 @@ theorem size_set (k : κ) (t : τ) (as : AList κ τ)
     assumption
 
 @[simp]
-theorem size_remove (k : κ) (t : τ) (as : AList κ τ)
+theorem size_remove (k : κ) (as : AList κ τ)
   : size (remove k as) + 1 =
     if (get? k as).isSome then as.size else as.size + 1
   := by
@@ -253,5 +254,4 @@ theorem size_pos_of_get?_some (k : κ) (as : AList κ τ)
     split at h
     subst_vars; simp [size]
     apply Nat.le_add_right
-    simp [size]
-    apply Nat.le_add_right
+
